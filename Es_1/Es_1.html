@@ -4,24 +4,72 @@
  		<style>canvas { width: 100%; height: 100% }</style>
  	</head>
  	<body>
- 		<script src="C:\Users\Mansitos_Picci\Desktop\three.js-master\three.js-master\build\three.js"></script> <!-- Path? -->
+ 		<script src="libs\three.js"></script>
+		<script src="libs\stats.min.js"></script>
  		<script>
- 			function Start(){
- 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+ 			var scene, renderer, camera, stats, cube;
+ 			var dir = 0;
 
-			var renderer = new THREE.WebGLRenderer();
+ 			function Start(){
+ 			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
-			var geometry = new THREE.CubeGeometry(1,1,1);
-			var material = new THREE.MeshBasicMaterial( { color:0x00ff00 } );
-			var cube = new THREE.Mesh( geometry, material );
-			scene.add( cube );
-
-			camera.position.z = 5;
-
 			document.body.appendChild(renderer.domElement); 
+
+			var geometry1 = new THREE.CubeGeometry(1,1,1);
+			var material1 = new THREE.MeshBasicMaterial( { color:0x00ff00 } );
+			var cube1 = new THREE.Mesh( geometry1, material1 );
+			scene.add(cube1);
+
+			var geometry2 = new THREE.CubeGeometry(3,0.1,3);
+			var material2 = new THREE.MeshBasicMaterial( { color:0xff1a1a } );
+			var cube2 = new THREE.Mesh( geometry2, material2 );
+			scene.add(cube2);
+
+			camera.position.z = 8;
+			camera.position.x = 2;
+			camera.position.y = 1;
+
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.margin = '10px';
+			document.body.appendChild(stats.domElement);
+
 			}
+
+			function Render() {	
+				requestAnimationFrame(Render);
+				stats.update();
+				CameraAnim(0.01,-3,8);
+				renderer.render(scene, camera);
+			}
+
+			function CameraAnim(speed,left,right){
+
+				if(dir==0){
+					camera.position.x=camera.position.x+speed;
+					if(camera.position.x>=right){
+						dir=1;
+					}
+				}
+
+				if(dir==1){
+					camera.position.x=camera.position.x-speed;
+					if(camera.position.x<=left){
+						dir=0;
+					}
+				}
+
+
+			}
+
+			Start();
+			Render();
+
  		</script>
  	</body>
 </html>

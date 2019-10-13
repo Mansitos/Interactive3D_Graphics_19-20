@@ -1,7 +1,7 @@
 
 <html>
 	<head>
-		<title>Es_3 - Draw a Square - Interactive 3D Graphics</title>
+		<title> Title - Interactive 3D Graphics</title>
 		<style>
 		body {
 			font-family: Monospace;
@@ -20,7 +20,7 @@
 	<body>
 
 		<script>
-			var scene, square, renderer, camera, stats;
+			var scene, object, renderer, camera, stats;
 			
 			function Start() {
 			
@@ -35,39 +35,49 @@
 
                 material = new THREE.MeshBasicMaterial({
                     color: 0xff0000,
-                    side: THREE.DoubleSide   //FRONT -> only FRONT side of the mesh is rendered
+					wireframe: true,
+                    side: THREE.FrontSide  //FRONT -> only FRONT side of the mesh is rendered
                 });                          //BACK -> only back side | DOUBLE -> both sides
                 
                 geometry = new THREE.Geometry();
-                //triangles definitions
-
+                
 				geometry.vertices.push(
-				new THREE.Vector3(1, 2, 0),  
-				new THREE.Vector3(1, 1, 0),
-				new THREE.Vector3(2, 1, 0),
-				new THREE.Vector3(2, 2, 0));
+				//"base"
+				new THREE.Vector3(0, 0, 0),  
+				new THREE.Vector3(0, 0, 1),
+				new THREE.Vector3(1, 0, 1),
+				new THREE.Vector3(1, 0, 0),
+				//"vertices"
+				new THREE.Vector3(0.5,0.705,0.5),
+				new THREE.Vector3(0.5,-0.705,0.5));
 
-                geometry.faces.push(new THREE.Face3(0,1,2));    // triangles order
-				geometry.faces.push(new THREE.Face3(0,2,3));
+				geometry.faces.push(new THREE.Face3(4,3,0));    // triangles (top half)
+				geometry.faces.push(new THREE.Face3(4,2,3)); 
+				geometry.faces.push(new THREE.Face3(4,1,2)); 
+				geometry.faces.push(new THREE.Face3(1,4,0));
 
-                square = new THREE.Mesh(geometry,material);
+				geometry.faces.push(new THREE.Face3(0,3,5));    // triangles (bottom half)
+				geometry.faces.push(new THREE.Face3(3,2,5)); 
+				geometry.faces.push(new THREE.Face3(2,1,5)); 
+				geometry.faces.push(new THREE.Face3(1,0,5));
 
-                scene.add(square);
+
+                object = new THREE.Mesh(geometry,material);
+				scene.add(object);
 
 				stats = new Stats();
 				stats.domElement.style.position = 'absolute';
 				stats.domElement.style.top = '0px';
 				document.body.appendChild( stats.domElement );
 
-				camera.position.z = 3.5;
-				camera.position.x = 1.5;
-				
+				camera.position.z = 3;
+				camera.position.x = 0.5;
+				camera.position.y = 0;
 			}
-			
+
 			function Update() {	
 				requestAnimationFrame(Update);
-				square.rotation.x += 0.01;
-				
+				object.rotation.y += 0.003;
 				stats.update();
 				renderer.render(scene, camera);
 			}

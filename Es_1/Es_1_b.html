@@ -1,0 +1,115 @@
+<html>
+ 	<head>
+ 		<title>Es_1 - First three.js app</title>
+ 		<style>canvas { width: 100%; height: 100% }</style>
+ 	</head>
+ 	<body>
+ 		<script src="libs\three.js"></script>
+		<script src="libs\stats.min.js"></script>
+ 		<script>
+ 			var scene, renderer, camera, stats, cube;
+ 			var dir = 0;
+			var speed = 0.01;
+			var FOV = 45;
+
+ 			function Start(){
+ 			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( FOV, window.innerWidth/window.innerHeight, 0.1, 100 );
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			document.body.appendChild(renderer.domElement); 
+
+			var geometry1 = new THREE.CubeGeometry(1,1,1);
+			var material1 = new THREE.MeshBasicMaterial( { color:0x00ff00 } );
+			var cube1 = new THREE.Mesh( geometry1, material1 );
+			scene.add(cube1);
+
+			var geometry2 = new THREE.CubeGeometry(2.25,0.1,2.25);
+			var material2 = new THREE.MeshBasicMaterial( { color:0xff1a1a } );
+			var cube2 = new THREE.Mesh( geometry2, material2 );
+			scene.add(cube2);
+
+			camera.position.z = 10;
+			camera.position.x = 2;
+			camera.position.y = 1;
+
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.margin = '10px';
+			document.body.appendChild(stats.domElement);
+
+			for(i = 0;i <= 10000; i++){
+				generateNewObject();
+			}
+
+			document.querySelector('html').onclick = function() {
+					generateNewObject(material1,material2);
+				}
+			}
+
+			function generateNewObject(mat1,mat2){
+				var size = Math.random();
+
+				var new_geometry1 = new THREE.CubeGeometry(size,size,size);
+				var new_geometry2 = new THREE.CubeGeometry(size*2,0.1,size*2);
+
+
+				var new_cube1 = new THREE.Mesh(new_geometry1,mat1);
+				var new_cube2 = new THREE.Mesh(new_geometry2,mat2);
+
+				scene.add(new_cube1);
+				scene.add(new_cube2);
+
+				var xdir;
+				if(Math.random()>0.5){xdir=1;}else{xdir=-1;}
+				var ydir;
+				if(Math.random()>0.5){ydir=1;}else{ydir=-1;}
+				
+				var z = Math.random()*-500;
+				var x = Math.random()*xdir*65;
+				var y = Math.random()*ydir*45;
+
+				new_cube1.position.set(x,y,z);
+				new_cube2.position.set(x,y,z);
+
+				
+			}
+
+			function Render() {	
+				requestAnimationFrame(Render);
+				stats.update();
+				CameraAnim(speed,-10,10);
+				renderer.render(scene, camera);
+			}
+
+			function CameraAnim(speed,left,right){
+
+				if(dir==0){
+					camera.position.x=camera.position.x+speed;
+					if(camera.position.x>=right){
+						dir=1;
+					}
+				}
+
+				if(dir==1){
+					camera.position.x=camera.position.x-speed;
+					if(camera.position.x<=left){
+						dir=0;
+					}
+				}
+
+				camera.position.z = camera.position.z-speed*5;
+
+
+
+			}
+
+			Start();
+			Render();
+
+ 		</script>
+ 	</body>
+</html>

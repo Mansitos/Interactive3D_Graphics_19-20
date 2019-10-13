@@ -1,0 +1,62 @@
+
+<html>
+	<head>
+		<title> Title - Interactive 3D Graphics</title>
+		<style>
+		body {
+			font-family: Monospace;
+			background-color:#f0f0f0;
+			margin: 0px;
+			overflow: hidden;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+		<script src="libs/three.js"></script>
+		<script src="libs/stats.min.js"></script>
+	</head>
+	<body>
+
+		<script>
+			var scene, triangle, renderer, camera, stats;
+			
+			function Start() {
+			
+				scene = new THREE.Scene();
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor(0xf0f0f0); // CHANGE BACKGROUND COLOR
+				document.body.appendChild( renderer.domElement );
+
+                var material, geometry, mesh;
+
+                material = new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                    side: THREE.DoubleSide   //FRONT -> only FRONT side of the mesh is rendered
+                });                          //BACK -> only back side | DOUBLE -> both sides
+                
+                geometry = new THREE.Geometry();
+                
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				document.body.appendChild( stats.domElement );
+
+				camera.position.z = 5;
+			}
+			
+			function Update() {	
+				requestAnimationFrame(Update);
+				stats.update();
+				renderer.render(scene, camera);
+			}
+
+			Start();
+			Update();
+			
+		</script>
+	</body>
+</html>

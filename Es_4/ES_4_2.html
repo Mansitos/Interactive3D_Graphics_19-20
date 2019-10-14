@@ -43,13 +43,13 @@
                 
 				geometry.vertices.push(
 				//"base"
-				new THREE.Vector3(0, 0, 0),  
-				new THREE.Vector3(0, 0, 1),
+				new THREE.Vector3(-1, 0, -1),  
+				new THREE.Vector3(-1, 0, 1),
 				new THREE.Vector3(1, 0, 1),
-				new THREE.Vector3(1, 0, 0),
+				new THREE.Vector3(1, 0, -1),
 				//"vertices"
-				new THREE.Vector3(0.5,0.705,0.5),
-				new THREE.Vector3(0.5,-0.705,0.5));
+				new THREE.Vector3(0,1,0),
+				new THREE.Vector3(0,-1,0));
 
 				geometry.faces.push(new THREE.Face3(4,3,0));    // triangles (top half)
 				geometry.faces.push(new THREE.Face3(4,2,3)); 
@@ -71,13 +71,14 @@
 				document.body.appendChild( stats.domElement );
 
 				camera.position.z = 3;
-				camera.position.x = 0.5;
+				camera.position.x = 0;
 				camera.position.y = 0;
 			}
 
 			function Update() {	
 				requestAnimationFrame(Update);
-				object.rotation.y += 0.003;
+				object.rotation.y += 0.001;
+				object.rotation.x += 0.001;
 				stats.update();
 				renderer.render(scene, camera);
 			}

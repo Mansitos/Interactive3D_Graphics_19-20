@@ -1,0 +1,188 @@
+
+<html>
+	<head>
+		<title> Es_5b Flower - Interactive 3D Graphics</title>
+		<style>
+		body {
+			font-family: Monospace;
+			background-color:#f0f0f0;
+			margin: 0px;
+			overflow: hidden;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+		<script src="libs/three.js"></script>
+		<script src="libs/stats.min.js"></script>
+		<script src="libs/OBJLoader.js"></script>
+		<script src="libs/Coordinates.js"></script>
+		<script src="libs/OrbitControls.js"></script>
+	</head>
+	-------------- Andrea Mansi UNIUD ---- Transformations excercise: Flower (scale,traslation,rotation)
+	<body>
+
+		<script>
+			// VARIABLES //
+			var scene, camera, renderer, camera, stats;
+			var wrframe = true;
+			
+			function Start() {
+	
+				setupScene();
+				setupCamera();
+				setupRenderer();
+				setupStatsOSD();
+				setupBasicLightSystem();
+
+				spawnFloor(250,0.2,250,-1);
+
+				// Start code goes here
+
+				//stem phase
+				var stem_geom = new THREE.SphereGeometry(1,32,32);
+				var stem_mat = new THREE.MeshPhongMaterial({color:0x302810,wireframe:wrframe});
+				var stem = new THREE.Mesh(stem_geom,stem_mat);
+				scene.add(stem);
+				stem.position.set(0,0,0);
+				stem.scale.set(1,0.25,1);
+
+				var center_pivot = new THREE.Object3D();
+				scene.add(center_pivot);
+				center_pivot.position.set(0,5,0);
+				center_pivot.add(stem);
+
+				stem.castShadow=true;
+				stem.receiveShadow=true;
+
+				//leaf phase
+				var leaf_geom1 = new THREE.CylinderGeometry(0.55,0.1,1.25,8,16);
+				var leaf_geom2 = new THREE.CylinderGeometry(0.2,0.55,1.6,8,16);
+				var leaf_mat = new THREE.MeshPhongMaterial({color:0x446600,wireframe:wrframe});
+				var leaf1 = new THREE.Mesh(leaf_geom1,leaf_mat);
+				var leaf2 = new THREE.Mesh(leaf_geom2,leaf_mat);
+
+				scene.add(leaf1);
+				leaf1.rotation.z = -90 * Math.PI/180;
+				leaf1.scale.set(0.2,0.6,1);
+				leaf1.position.set(0.3,3,0);
+				leaf1.rotation.x = 25 * Math.PI/180;
+
+				scene.add(leaf2);
+				leaf2.rotation.z = -90 * Math.PI/180;
+				leaf2.scale.set(0.2,0.6,1);
+				leaf2.position.set(1.15,3,0);
+				leaf2.rotation.x = 25 * Math.PI/180;
+
+				//stamen phase
+				var stam_geom = new THREE.CylinderGeometry(0.18,0.18,8,16);
+				var stam_mat = new THREE.MeshPhongMaterial({color:0x446600,wireframe:wrframe});
+				var stam = new THREE.Mesh(stam_geom,stam_mat);
+				scene.add(stam);
+				stam.position.set(0,1,0);
+
+				stam.castShadow=true;
+				stam.receiveShadow=true;
+
+				//petal phase
+				var petal_geom = new THREE.CylinderGeometry(0.2,0.45,2,32);
+				var petal_mat = new THREE.MeshPhongMaterial({color:0xffc61a,wireframe:wrframe});
+				//var petal = new THREE.Mesh(petal_geom,petal_mat);
+
+				function add_petals(petals_quantity){
+					var angle = (360/petals_quantity)*Math.PI/180;
+					var new_petal;
+
+					for(i=0;i<petals_quantity;i++){
+						new_petal = new THREE.Mesh(petal_geom,petal_mat);
+						new_petal.rotation.x = -90 * Math.PI/180;
+						new_petal.scale.set(1,1,0.33);
+						new_petal.position.set(0,0,1.8);
+						scene.add(new_petal);
+						var flower_pivot = new THREE.Object3D();
+						scene.add(flower_pivot);
+						flower_pivot.add(new_petal);
+						flower_pivot.rotation.y = angle*i;
+
+						new_petal.castShadow = true;
+						new_petal.receiveSHadow=true;
+
+						center_pivot.add(flower_pivot)
+					}
+
+					center_pivot.rotation.x = 10;
+				}
+
+				add_petals(14); //number of petals to generate
+
+			}
+			
+			function Update() {	
+				requestAnimationFrame(Update);
+				stats.update();
+				controls.update();
+				renderer.render(scene, camera);
+			}
+
+			function setupScene(){	// SCENE //
+				scene = new THREE.Scene();
+				//Coordinates.drawAllAxes();
+			}
+
+			function setupCamera(){	 // CAMERA //
+				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 0.1, 1000 );
+				camera.position.set(10,10,10);
+				camera.lookAt( new THREE.Vector3(0,0,0));
+				controls = new THREE.OrbitControls(camera);
+			}
+
+			function setupRenderer(){	// RENDERER //
+				renderer = new THREE.WebGLRenderer({antialias:true});
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor(0xf0f0f0);
+				renderer.shadowMap.Type = THREE.PCFShadowMap;
+				document.body.appendChild( renderer.domElement);
+				renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.BasicShadowMap;
+			}
+
+			function setupStatsOSD(){	// STATISTICS OSD //
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				document.body.appendChild( stats.domElement );
+			}
+
+			function setupBasicLightSystem(){	// ADD A BASIC LIGHT SYSTEM TO THE SCENE //
+				// basic ambient light
+				light = new THREE.AmbientLight(0x404040,0.45); 
+				scene.add(light);
+				// basic point light
+				plight = new THREE.PointLight(0xffffff,2.9,21);
+				plight.castShadow = true;
+				plight.shadow.camera.near = 0.2;
+				plight.shadow.camera.far = 25;
+				scene.add(plight);	
+				plight.position.set(-0.5,10,2);
+				plight.shadow.mapSize.width = 2048;
+				plight.shadow.mapSize.height = 2048;
+			}
+
+			function spawnFloor(larghezza,altezza,profondità,pos_y){
+				var geometry1 = new THREE.CubeGeometry(larghezza,altezza,profondità);
+				var material1 = new THREE.MeshPhongMaterial( { color:0xffffff } );
+				var floor = new THREE.Mesh( geometry1, material1 );
+				floor.receiveShadow = true;
+				scene.add(floor);
+				floor.position.y = pos_y;
+			}
+
+			// Main code goes here
+
+			Start();
+			Update();
+			
+		</script>
+	</body>
+</html>

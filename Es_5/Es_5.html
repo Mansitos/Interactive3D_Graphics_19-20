@@ -20,7 +20,7 @@
 		<script src="libs/Coordinates.js"></script>
 		<script src="libs/OrbitControls.js"></script>
 	</head>
-	-------------- Andrea Mansi UNIUD ---- Title & Description goes here
+	-------------- Andrea Mansi UNIUD ---- Transformations tests (scale,traslation,rotation)
 	<body>
 
 		<script>
@@ -39,7 +39,29 @@
 
 				// Start code goes here
 
+				var geometry1 = new THREE.CubeGeometry(1,1,1);
+				var material1 = new THREE.MeshPhongMaterial( { color:0x00ff00,wireframe:false } );
+				var cube1 = new THREE.Mesh( geometry1, material1 );
+				var cube2 = new THREE.Mesh( geometry1, material1 );
+				var cube3 = new THREE.Mesh( geometry1, material1 );
+				scene.add(cube1);
+				scene.add(cube2);
+				scene.add(cube3);
+				
+				//.position is immutable so cube.position = new Vector3(x,z,y) does not work!
 
+				cube1.position.set(-5,2,0);
+				cube2.position.set(2.5,2,0);
+				cube3.position.set(-0.5,2,0);
+
+				cube2.rotation.z = 45 * Math.PI/180;
+				cube2.rotation.y = 60 * Math.PI/180;
+
+				cube1.scale.set(2,3,1);
+
+				cube1.castShadow = true;
+				cube2.castShadow = true;
+				cube3.castShadow = true;
 
 			}
 			
@@ -52,7 +74,7 @@
 
 			function setupScene(){	// SCENE //
 				scene = new THREE.Scene();
-				Coordinates.drawAllAxes();
+				//Coordinates.drawAllAxes();
 			}
 
 			function setupCamera(){	 // CAMERA //

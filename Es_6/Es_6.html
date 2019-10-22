@@ -1,0 +1,113 @@
+
+<html>
+		<head>
+			<title> Es_6 - Solar System - Interactive 3D Graphics</title>
+			<style>
+			body {
+				font-family: Monospace;
+				background-color:#f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+			canvas {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+			<script src="libs/three.js"></script>
+			<script src="libs/stats.min.js"></script>
+			<script src="libs/OBJLoader.js"></script>
+			<script src="libs/Coordinates.js"></script>
+			<script src="libs/OrbitControls.js"></script>
+		</head>
+		-------------- Andrea Mansi UNIUD ---- Solar System rotations examples
+		<body>
+	
+			<script>
+				// VARIABLES //
+				var scene, camera, renderer, camera, stats;
+				
+				function Start() {
+		
+					setupScene();
+					setupCamera();
+					setupRenderer();
+					setupStatsOSD();
+					setupBasicLightSystem();
+	
+					spawnFloor(300,0.2,300,0); // a simple "plane"
+	
+					// Start code goes here
+	
+	
+	
+				}
+				
+				function Update() {	
+					requestAnimationFrame(Update);
+					stats.update();
+					controls.update();
+					renderer.render(scene, camera);
+				}
+	
+				function setupScene(){	// SCENE //
+					scene = new THREE.Scene();
+					Coordinates.drawAllAxes();
+				}
+	
+				function setupCamera(){	 // CAMERA //
+					camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+					camera.position.set(3,4,6);
+					camera.lookAt( new THREE.Vector3(0,0,0));
+					controls = new THREE.OrbitControls(camera);
+				}
+	
+				function setupRenderer(){	// RENDERER //
+					renderer = new THREE.WebGLRenderer({antialias:true});
+					renderer.setSize( window.innerWidth, window.innerHeight );
+					renderer.setClearColor(0xf0f0f0);
+					renderer.shadowMap.Type = THREE.PCFShadowMap;
+					document.body.appendChild( renderer.domElement);
+					renderer.shadowMap.enabled = true;
+					renderer.shadowMap.type = THREE.BasicShadowMap;
+				}
+	
+				function setupStatsOSD(){	// STATISTICS OSD //
+					stats = new Stats();
+					stats.domElement.style.position = 'absolute';
+					stats.domElement.style.top = '0px';
+					document.body.appendChild( stats.domElement );
+				}
+	
+				function setupBasicLightSystem(){	// ADD A BASIC LIGHT SYSTEM TO THE SCENE //
+					// basic ambient light
+					light = new THREE.AmbientLight(0xffffff,0.3); 
+					scene.add(light);
+					// basic point light
+					plight = new THREE.PointLight(0xffffff,2.9,21);
+					plight.castShadow = true;
+					plight.shadow.camera.near = 0.2;
+					plight.shadow.camera.far = 25;
+					scene.add(plight);
+					plight.position.y = 10;
+					plight.shadow.mapSize.width = 2048;
+					plight.shadow.mapSize.height = 2048;
+				}
+	
+				function spawnFloor(larghezza,altezza,profondità,pos_y){
+					var geometry1 = new THREE.CubeGeometry(larghezza,altezza,profondità);
+					var material1 = new THREE.MeshPhongMaterial( { color:0xffffff } );
+					var floor = new THREE.Mesh( geometry1, material1 );
+					floor.receiveShadow = true;
+					scene.add(floor);
+					floor.position.y = pos_y;
+				}
+	
+				// Main code goes here
+	
+				Start();
+				Update();
+				
+			</script>
+		</body>
+	</html>

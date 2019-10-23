@@ -1,7 +1,7 @@
 
 <html>
 		<head>
-			<title> Es_5 - Interactive 3D Graphics</title>
+			<title> Es_6 - Axis & rotations tests - Interactive 3D Graphics</title>
 			<style>
 			body {
 				font-family: Monospace;
@@ -20,7 +20,7 @@
 			<script src="libs/Coordinates.js"></script>
 			<script src="libs/OrbitControls.js"></script>
 		</head>
-		-------------- Andrea Mansi UNIUD ---- Title & Description goes here
+		-------------- Andrea Mansi UNIUD ---- Some Rotations & Axis tests
 		<body>
 	
 			<script>
@@ -35,9 +35,40 @@
 					setupStatsOSD();
 					setupBasicLightSystem();
 	
-					spawnFloor(250,0.2,250,-1);
+					spawnFloor(300,0.2,300,-1); // a simple "plane"
 	
 					// Start code goes here
+
+					var geometry2 = new THREE.CubeGeometry(1.8,1.8,1.8);
+					var material2 = new THREE.MeshPhongMaterial( { color:0x2f00ff, transparent:false, opacity:0.9 } );
+					cube2 = new THREE.Mesh( geometry2, material2 );
+					cube2.receiveShadow = true;
+					cube2.castShadow = true;
+					scene.add(cube2);
+					cube2.position.y = 1;
+					cube2.position.x = 4;
+
+					//rotation tests 
+					cube2.rotation.z = 45*Math.PI/180;
+					cube2.rotation.y = 45*Math.PI/180;
+
+					var geometry1 = new THREE.CubeGeometry(1.8,1.8,1.8);
+					var material1 = new THREE.MeshPhongMaterial( { color:0x414433, transparent:false, opacity:0.9 } );
+					cube1 = new THREE.Mesh( geometry1, material1 );
+					cube1.receiveShadow = true;
+					cube1.castShadow = true;
+					scene.add(cube1);
+					cube1.position.y = 1;
+					cube1.position.x = -4;
+
+					//axis test
+					var axis = new THREE.Vector3(1,1,1);
+					axis.normalize();
+					var angle = 45*Math.PI/180;
+
+					cube2.matrix.makeRotationAxis(axis,angle);
+					cube2.matrixAutoUpdate=false;
+					
 	
 	
 	

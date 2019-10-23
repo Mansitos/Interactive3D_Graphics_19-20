@@ -1,7 +1,7 @@
 
 <html>
 	<head>
-		<title> Es_5 - Interactive 3D Graphics</title>
+		<title> Some Tests - Interactive 3D Graphics</title>
 		<style>
 		body {
 			font-family: Monospace;
@@ -20,7 +20,7 @@
 		<script src="libs/Coordinates.js"></script>
 		<script src="libs/OrbitControls.js"></script>
 	</head>
-	-------------- Andrea Mansi UNIUD ---- Transformations tests (scale,traslation,rotation)
+	-------------- Andrea Mansi UNIUD ---- Some Tests
 	<body>
 
 		<script>
@@ -39,42 +39,52 @@
 
 				// Start code goes here
 
-				var geometry1 = new THREE.CubeGeometry(1,1,1);
-				var material1 = new THREE.MeshPhongMaterial( { color:0x00ff00,wireframe:false } );
-				var cube1 = new THREE.Mesh( geometry1, material1 );
-				var cube2 = new THREE.Mesh( geometry1, material1 );
-				var cube3 = new THREE.Mesh( geometry1, material1 );
-				scene.add(cube1);
-				scene.add(cube2);
-				scene.add(cube3);
-				
-				//.position is immutable so cube.position = new Vector3(x,z,y) does not work!
+				var material, geometry, mesh;
 
-				cube1.position.set(-5,2,0);
-				cube2.position.set(2.5,2,0);
-				cube3.position.set(-0.5,2,0);
+				material = new THREE.MeshPhongMaterial({
+					color: 0xff0213,
+					wireframe: false,
+					side: THREE.FrontSide  //FRONT -> only FRONT side of the mesh is rendered
+				});                          //BACK -> only back side | DOUBLE -> both sides
 
-				cube2.rotation.z = 45 * Math.PI/180;
-				cube2.rotation.y = 60 * Math.PI/180;
 
-				cube1.scale.set(2,3,1);
 
-				cube1.castShadow = true;
-				cube2.castShadow = true;
-				cube3.castShadow = true;
+				//cube
+				var geometry2 = new THREE.CubeGeometry(1.8,1.8,1.8);
+				var material2 = new THREE.MeshPhongMaterial( { color:0x2f00ff, transparent:false, opacity:0.9 } );
+				cube = new THREE.Mesh( geometry2, material2 );
+				cube.receiveShadow = true;
+				cube.castShadow = true;
+				scene.add(cube);
+				cube.position.y = 10;
+
+				//cube
+				var geometry3 = new THREE.DodecahedronGeometry(3.35,0);
+				var material3 = new THREE.MeshPhongMaterial( { color:0x8f754, transparent:false, opacity:0.9 } );
+				e = new THREE.Mesh( geometry3, material3 );
+				e.receiveShadow = true;
+				e.castShadow = true;
+				scene.add(e);
+				e.position.y = 4;
+
+
 
 			}
 			
 			function Update() {	
 				requestAnimationFrame(Update);
 				stats.update();
+				cube.rotation.y += 0.006;
+				cube.rotation.x += 0.006;
+
+				e.rotation.y -= 0.003;
 				controls.update();
 				renderer.render(scene, camera);
 			}
 
 			function setupScene(){	// SCENE //
 				scene = new THREE.Scene();
-				//Coordinates.drawAllAxes();
+				Coordinates.drawAllAxes();
 			}
 
 			function setupCamera(){	 // CAMERA //
@@ -103,15 +113,15 @@
 
 			function setupBasicLightSystem(){	// ADD A BASIC LIGHT SYSTEM TO THE SCENE //
 				// basic ambient light
-				light = new THREE.AmbientLight(0xffffff,0.3); 
+				light = new THREE.AmbientLight(0xffE38c,0.1); 
 				scene.add(light);
 				// basic point light
-				plight = new THREE.PointLight(0xffffff,2.9,21);
+				plight = new THREE.PointLight(0xffffff,3,23);
 				plight.castShadow = true;
 				plight.shadow.camera.near = 0.2;
 				plight.shadow.camera.far = 25;
 				scene.add(plight);
-				plight.position.y = 10;
+				plight.position.y = 16;
 				plight.shadow.mapSize.width = 2048;
 				plight.shadow.mapSize.height = 2048;
 			}
@@ -123,6 +133,7 @@
 				floor.receiveShadow = true;
 				scene.add(floor);
 				floor.position.y = pos_y;
+
 			}
 
 			// Main code goes here

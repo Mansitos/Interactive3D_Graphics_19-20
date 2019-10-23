@@ -26,7 +26,7 @@
 		<script>
 			// VARIABLES //
 			var scene, camera, renderer, camera, stats;
-			var wrframe = true;
+			var wrframe = false;
 			
 			function Start() {
 	
@@ -111,7 +111,7 @@
 						center_pivot.add(flower_pivot)
 					}
 
-					center_pivot.rotation.x = 10;
+					center_pivot.rotation.x = 40*Math.PI/180;
 				}
 
 				add_petals(14); //number of petals to generate

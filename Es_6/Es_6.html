@@ -26,6 +26,8 @@
 			<script>
 				// VARIABLES //
 				var scene, camera, renderer, camera, stats;
+				var sun_pivot,planet_pivot,planet;
+				var wirefra=true;
 				
 				function Start() {
 		
@@ -34,19 +36,77 @@
 					setupRenderer();
 					setupStatsOSD();
 					setupBasicLightSystem();
-	
-					spawnFloor(300,0.2,300,0); // a simple "plane"
+
+
 	
 					// Start code goes here
+
+					var sun = Sun();
+					scene.add(sun);
+					sun_pivot = new THREE.Object3D();
+					scene.add(sun_pivot);
+
+					planet = Planet();
+					scene.add(planet);
+					planet.position.x = 7;
+					planet.rotation.x = 35;
+					sun_pivot.add(planet);
+
+					planet_pivot = new THREE.Object3D();
+					planet.add(planet_pivot);
+
+					var moon = Moon();
+					scene.add(moon);
+					planet_pivot.add(moon);
+					moon.position.x = 1;
+
+					// planet poles
+					var geometry = new THREE.SphereGeometry( 0.15, 8, 8 );
+					var material = new THREE.MeshPhongMaterial( {color: "red",wireframe: wirefra} );
+					var pole1 = new THREE.Mesh( geometry, material );
+					var pole2 = new THREE.Mesh( geometry, material );
+					scene.add(pole1,pole2);
+					planet_pivot.add(pole1,pole2);
+					pole1.position.y=0.425;
+					pole2.position.y=-0.425;
+
+
+
+
 	
 	
-	
+				}
+
+				function Planet(){
+					var geometry = new THREE.SphereGeometry( 0.5, 16, 16 );
+					var material = new THREE.MeshPhongMaterial( {color: "green", wireframe: wirefra} );
+					var sphere = new THREE.Mesh( geometry, material );
+					return sphere;
+				}
+
+				function Sun(){
+					var geometry = new THREE.SphereGeometry( 2, 32, 32 );
+					var material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: wirefra} );
+					var sphere = new THREE.Mesh( geometry, material );
+					return sphere;
+				}
+
+				function Moon(){
+					var geometry = new THREE.SphereGeometry( 0.2, 16, 16 );
+					var material = new THREE.MeshPhongMaterial( {color: "blue",	wireframe:wirefra} );
+					var sphere = new THREE.Mesh( geometry, material );
+					return sphere;
 				}
 				
 				function Update() {	
 					requestAnimationFrame(Update);
 					stats.update();
 					controls.update();
+
+					sun_pivot.rotation.y += 0.0025;
+					planet_pivot.rotation.y += 0.0025;
+					planet.rotation.y += 0.0075;
+
 					renderer.render(scene, camera);
 				}
 	
@@ -81,17 +141,17 @@
 	
 				function setupBasicLightSystem(){	// ADD A BASIC LIGHT SYSTEM TO THE SCENE //
 					// basic ambient light
-					light = new THREE.AmbientLight(0xffffff,0.3); 
+					light = new THREE.AmbientLight(0xffffff,0.9); 
 					scene.add(light);
 					// basic point light
-					plight = new THREE.PointLight(0xffffff,2.9,21);
+					/*plight = new THREE.PointLight(0xffffff,2.9,21);
 					plight.castShadow = true;
 					plight.shadow.camera.near = 0.2;
 					plight.shadow.camera.far = 25;
 					scene.add(plight);
 					plight.position.y = 10;
 					plight.shadow.mapSize.width = 2048;
-					plight.shadow.mapSize.height = 2048;
+					plight.shadow.mapSize.height = 2048;*/
 				}
 	
 				function spawnFloor(larghezza,altezza,profondità,pos_y){

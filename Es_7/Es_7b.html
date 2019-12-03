@@ -1,7 +1,7 @@
 
 <html>
 		<head>
-			<title> Es_7 - Interactive 3D Graphics</title>
+			<title> Es_7b - Interactive 3D Graphics</title>
 			<style>
 			body {
 				font-family: Monospace;
@@ -22,25 +22,79 @@
 		</head>
 		-------------- Andrea Mansi UNIUD ---- Es_7
 		<body>
-	
+
+			<script type="text/x-glsl" id="vertex">
+				attribute float displacement;
+				varying vec3 color;
+				varying vec3 vNormal;
+				uniform float amplitude;
+				
+				void main() {
+					vec3 newPosition = position + normal * displacement * amplitude;
+					// transforms the vertex from object space to clip space coords		
+					gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+					vNormal = normal;	
+				}
+			</script>
+			
+			<script type="text/x-glsl" id="fragment">
+				varying vec3 color;
+				varying vec3 vNormal;
+
+				void main() {
+					gl_FragColor = vec4(1.0*vNormal.x,1.0*vNormal.y,1.0*vNormal.z, 1.0);
+				}
+			</script>
+
 			<script>
 				// VARIABLES //
 				var scene, camera, renderer, camera, stats;
-				
-				function Start() {
+				var amplitude, sphereMaterial;
+				var max_ampl = 2, min_ampl = 0.5, ampl_step = 0.005, up = true;
 		
-					setupScene();
-					setupCamera();
-					setupRenderer();
-					setupStatsOSD();
-					setupBasicLightSystem();
-	
-					spawnFloor(250,0.2,250,-1);
-	
-					// Start code goes here
-	
-	
-	
+			function Start() {
+			
+				setupScene();
+				setupCamera();
+				setupRenderer();
+				setupStatsOSD();
+				setupBasicLightSystem();
+					
+				// scene code here
+				var uniforms = {
+					"amplitude": {type:"float", value:1}
+				};
+						
+				var vs = document.getElementById("vertex").textContent;
+				var fs = document.getElementById("fragment").textContent;
+				
+				sphereMaterial = new THREE.ShaderMaterial({uniforms:uniforms, vertexShader: vs, fragmentShader: fs });
+				
+				sphere = new THREE.Mesh(
+					new THREE.SphereBufferGeometry( 10, 256, 256 ),
+					sphereMaterial );
+
+				sphere.castShadow=true;
+				sphere.receiveShadow=true;
+				
+				spawnFloor(1500,1,1500,-75);
+				
+					
+				displacement = new Float32Array( sphere.geometry.attributes.position.count );
+				
+				for(var i = 0; i < displacement.length; i++) {
+				   displacement[i]=Math.random() * 30;
+				}
+
+				
+				sphere.geometry.addAttribute( 'displacement', new THREE.BufferAttribute( displacement, 1 ));
+					
+				scene.add( sphere );
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				document.body.appendChild( stats.domElement );
+
 				}
 				
 				function Update() {	
@@ -48,6 +102,26 @@
 					stats.update();
 					controls.update();
 					renderer.render(scene, camera);
+
+
+					// ANIMATION LOGIC (ORRENDA....)
+					ampl = sphere.material.uniforms.amplitude.value;
+
+					if(ampl>min_ampl && up==true){
+						amplitude = ampl + ampl_step;
+					}if(ampl>max_ampl){
+						up=false;
+					}if(ampl>min_ampl && up==false){
+						amplitude = ampl - ampl_step;
+					}if(ampl <= min_ampl){
+						up=true;
+						amplitude = ampl + ampl_step;
+					}
+
+
+					sphere.material.uniforms.amplitude.value = amplitude;
+
+
 				}
 	
 				function setupScene(){	// SCENE //
@@ -57,7 +131,7 @@
 	
 				function setupCamera(){	 // CAMERA //
 					camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-					camera.position.set(3,4,6);
+					camera.position.set(50,50,50);
 					camera.lookAt( new THREE.Vector3(0,0,0));
 					controls = new THREE.OrbitControls(camera);
 				}
@@ -81,7 +155,7 @@
 	
 				function setupBasicLightSystem(){	// ADD A BASIC LIGHT SYSTEM TO THE SCENE //
 					// basic ambient light
-					light = new THREE.AmbientLight(0xffffff,0.3); 
+					light = new THREE.AmbientLight(0xffffff,0.23); 
 					scene.add(light);
 					// basic point light
 					plight = new THREE.PointLight(0xffffff,2.9,21);
@@ -89,7 +163,7 @@
 					plight.shadow.camera.near = 0.2;
 					plight.shadow.camera.far = 25;
 					scene.add(plight);
-					plight.position.y = 10;
+					plight.position.y = 65;
 					plight.shadow.mapSize.width = 2048;
 					plight.shadow.mapSize.height = 2048;
 				}

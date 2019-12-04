@@ -39,9 +39,10 @@
 			<script type="text/x-glsl" id="fragment_1">
 				varying vec3 vColor;
 	
-				void main() {
-					gl_FragColor = vec4(vColor, 1.0);
+				void main() {				
+					gl_FragColor = vec4(0.5,0.5,0.5, 1.0);
 				}
+
 			</script>
 
 			<!-- VERTEX SHADER 2-->
@@ -107,7 +108,7 @@
 						sphereMaterial_2 );
 					
 					basic_sphere = new THREE.Mesh(
-						new THREE.SphereGeometry (1, 32, 16),
+						new THREE.BoxGeometry (2,2,2),
 						new THREE.MeshBasicMaterial({color:'blue'})
 					);
 
